@@ -26,4 +26,7 @@ public class Creator implements Serializable {
     private String firstname;
     @Column(name = "lastname")
     private String lastname;
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

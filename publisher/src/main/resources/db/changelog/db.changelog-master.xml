@@ -132,4 +132,22 @@
             </delete>
         </rollback>
     </changeSet>
+
+    <changeSet id="add_role_to_creator" author="bunaev">
+        <addColumn tableName="tbl_creator">
+            <column name="role" type="VARCHAR(20)" defaultValue="USER">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- Обновляем существующего пользователя до роли ADMIN -->
+        <update tableName="tbl_creator">
+            <column name="role" value="ADMIN"/>
+            <where>login='bunaevkonstantin@bk.ru'</where>
+        </update>
+
+        <rollback>
+            <dropColumn tableName="tbl_creator" columnName="role"/>
+        </rollback>
+    </changeSet>
 </databaseChangeLog>
