@@ -1,0 +1,49 @@
+
+spring:
+  cassandra:
+    contact-points: localhost
+    port: 9042
+    local-datacenter: datacenter1
+    schema-action: CREATE_IF_NOT_EXISTS
+    keyspace-name: distcomp
+  application:
+    name: discussion
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+      acks: all
+      retries: 3
+      batch-size: 16384
+    consumer:
+      group-id: discussion
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      enable-auto-commit: false
+      properties:
+        spring.json.trusted.packages: "*"
+    listener:
+      ack-mode: manual_immediate
+      concurrency: 3
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+logging:
+  level:
+    kafka: error
+    web: error
+    liquibase: error
+    com:
+      discussion: error
+server:
+  port: 24130
+
+

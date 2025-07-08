@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <!-- Создание таблицы tbl_creator -->
+    <changeSet id="create_tbl_creator" author="bunaev">
+        <createTable tableName="tbl_creator">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="login" type="VARCHAR(64)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="firstname" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastname" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="tbl_creator"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Создание таблицы tbl_article -->
+    <changeSet id="create_tbl_article" author="bunaev">
+        <createTable tableName="tbl_article">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="creator_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_article_creator"
+                             referencedTableName="tbl_creator" referencedColumnNames="id"/>
+            </column>
+            <column name="title" type="VARCHAR(64)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="content" type="VARCHAR(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="tbl_article"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Создание таблицы tbl_sticker -->
+    <changeSet id="create_tbl_sticker" author="bunaev">
+        <createTable tableName="tbl_sticker">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="tbl_sticker"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Создание таблицы tbl_article_sticker -->
+    <changeSet id="create_tbl_article_sticker" author="bunaev">
+        <createTable tableName="tbl_article_sticker">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="article_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_article_sticker_article"
+                             referencedTableName="tbl_article" referencedColumnNames="id"/>
+            </column>
+            <column name="sticker_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_article_sticker_sticker"
+                             referencedTableName="tbl_sticker" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="tbl_article_sticker"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Создание таблицы tbl_reaction -->
+    <changeSet id="create_tbl_reaction" author="bunaev">
+        <createTable tableName="tbl_reaction">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="article_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_reaction_article"
+                             referencedTableName="tbl_article" referencedColumnNames="id"/>
+            </column>
+            <column name="content" type="VARCHAR(2048)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="tbl_reaction"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Добавление начальных данных -->
+    <changeSet id="insert_initial_data" author="bunaev">
+        <insert tableName="tbl_creator">
+            <column name="id" value="1"/>
+            <column name="login" value="bunaevkonstantin@bk.ru"/>
+            <column name="password" value="secure_password"/>
+            <column name="firstname" value="Бунаев"/>
+            <column name="lastname" value="Константин"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="tbl_creator">
+                <where>login='bunaevkonstantin@bk.ru'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
