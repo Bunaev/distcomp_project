@@ -1,6 +1,7 @@
 package com.publisher.dto.in;
 
 
+import com.publisher.entities.Role;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -23,4 +24,5 @@ public class CreatorRequestTo implements Serializable {
     private String firstname;
     @Size(min = 2, max = 64)
     private String lastname;
+    private String role;
 }

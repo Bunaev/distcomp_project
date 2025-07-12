@@ -1,5 +1,6 @@
 package com.publisher.dto.out;
 
+import com.publisher.entities.Role;
 import lombok.*;
 
 import java.io.Serializable;
@@ -14,4 +15,5 @@ public class CreatorResponseTo implements Serializable {
     private String password;
     private String firstname;
     private String lastname;
+    private String role;
 }

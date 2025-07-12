@@ -60,3 +60,9 @@ logging:
     com:
       publisher: error
     redis: info
+    org:
+      springframework:
+        security: trace
+jwt:
+  secret: your-256-bit-secret-key-base64-encoded
+  lifetime: 86400000

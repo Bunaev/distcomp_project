@@ -1,14 +1,17 @@
 package com.publisher.service;
 
+import com.publisher.config.LoginAlreadyExistException;
 import com.publisher.dto.CreatorMapper;
 import com.publisher.dto.in.CreatorRequestTo;
 import com.publisher.dto.out.CreatorResponseTo;
 import com.publisher.entities.Creator;
+import com.publisher.entities.Role;
 import com.publisher.repository.CreatorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +23,19 @@ import java.util.List;
 public class CreatorService {
     private final CreatorRepository creatorRepository;
     private CreatorMapper mapper;
+    private final PasswordEncoder passwordEncoder;
+
 
     @CacheEvict(value = "allCreators", allEntries = true)
     public CreatorResponseTo create(CreatorRequestTo creatorRequestTo) {
-        Creator creator = Creator.builder()
-                .login(creatorRequestTo.getLogin())
-                .firstname(creatorRequestTo.getFirstname())
-                .password(creatorRequestTo.getPassword())
-                .lastname(creatorRequestTo.getLastname()).build();
-        return mapper.toResponseDto(creatorRepository.save(creator));
+        if (creatorRepository.findByLogin(creatorRequestTo.getLogin()).isPresent()) {
+            throw new LoginAlreadyExistException("Login is already exist!");
+        } else {
+            Creator creator = mapper.toEntity(creatorRequestTo);
+            creator.setRole(creatorRequestTo.getRole() == null?Role.CUSTOMER: Role.valueOf(creatorRequestTo.getRole()));
+            creator.setPassword(passwordEncoder.encode(creatorRequestTo.getPassword()));
+            return mapper.toResponseDto(creatorRepository.save(creator));
+        }
     }
     @Cacheable(value = "allCreators")
     public List<CreatorResponseTo> getCreators() {
@@ -56,5 +63,9 @@ public class CreatorService {
     @Cacheable(value = "creators", key = "#id")
     public CreatorResponseTo get(Long id) {
         return mapper.toResponseDto(creatorRepository.findById(id).orElseThrow());
+    }
+
+    public boolean existsByLogin(String login) {
+        return creatorRepository.findByLogin(login).isPresent();
     }
 }
