@@ -63,6 +63,8 @@ logging:
     org:
       springframework:
         security: trace
+    io:
+      jsonwebtoken: trace
 jwt:
-  secret: your-256-bit-secret-key-base64-encoded
+  secret: my-secret-key-for-distcomp-project-jwt-task
   lifetime: 86400000

@@ -18,7 +18,11 @@ public class SecurityCreatorController {
 
     @GetMapping
     public ResponseEntity<Object> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(creatorService.getCreators());
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(creatorService.getCreators());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
     }
 
 
